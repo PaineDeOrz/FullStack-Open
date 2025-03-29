@@ -56,14 +56,27 @@ const App = () => {
       alert('Name or number cannot be empty')
       return
     }
-    if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to the phonebook`)
-      return
-    }
     if (persons.find(person => person.number === newNumber)) {
       alert(`${newNumber} is already added to the phonebook`)
       return
     }
+    if (persons.find(person => person.name === newName)) {
+      if (persons.find(person => person.name === newName).number !== newNumber) {
+        if (window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+          const id = persons.find(person => person.name === newName).id
+          personService
+            .update(id, {...personObject, id})
+            .then(returnedPerson => {
+              setPersons(persons.map(p => p.id !== id ? p : returnedPerson))
+              setNewName('')
+              setNewNumber('')
+            })
+        }
+      }
+      else {alert(`${newName} is already added to the phonebook`)}
+      return
+    }
+    
 
     personService
       .create(personObject)
