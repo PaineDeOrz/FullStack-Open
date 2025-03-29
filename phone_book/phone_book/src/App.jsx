@@ -84,6 +84,14 @@ const App = () => {
               setNewName('')
               setNewNumber('')
             })
+            .catch(error => {
+              setErrorMessage(`Information of ${newName} has already been removed from server`)
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, 5000)
+              setPersons(persons.filter(p => p.id !== id))
+            })
+
             setErrorMessage(`Updated ${newName}`)
             setTimeout(() => {
               setErrorMessage(null)
@@ -102,10 +110,11 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
-      setErrorMessage(`Added ${newName}`)
-            setTimeout(() => {
-              setErrorMessage(null)
-            }, 5000)
+
+    setErrorMessage(`Added ${newName}`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
   } 
 
   const deletePerson = (id) => {
@@ -113,6 +122,13 @@ const App = () => {
       personService
         .deletePerson(id)
         .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+        })
+        .catch(error => {
+          setErrorMessage(`Information of ${persons.find(p => p.id === id).name} has already been removed from server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
           setPersons(persons.filter(p => p.id !== id))
         })
     }
