@@ -22,10 +22,14 @@ const PersonForm = ({addPerson, newName, handleNameChange, newNumber, handleNumb
   )
 }
 
-const Persons = ({personsToShow}) => {
+const Persons = ({personsToShow, deletePerson}) => {
   return (
     <ul>
-      {personsToShow.map(person => <li key={person.name}>{person.name} {person.number}</li>)}
+      {personsToShow.map(person => 
+      <li 
+        key={person.name}>{person.name} {person.number}
+        <button onClick={() => deletePerson(person.id)}>delete</button>
+      </li>)}
     </ul>
   )
 }
@@ -70,6 +74,16 @@ const App = () => {
       })
   } 
 
+  const deletePerson = (id) => {
+    if (window.confirm(`Delete ${persons.find(p => p.id === id).name} ?`)) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+        })
+    }
+  }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -93,7 +107,7 @@ const App = () => {
       <h2>Add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} deletePerson={deletePerson}/>
     </div>
   )
 }
