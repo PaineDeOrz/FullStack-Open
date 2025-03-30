@@ -1,15 +1,20 @@
 import axios from 'axios'
 import {useState, useEffect} from 'react'
 
-const Countries = ({countriesToShow}) => {
+const Countries = ({ countriesToShow, handleShowCountry }) => {
   return (
     countriesToShow === 'Too many matches, specify another filter'
       ? <div>{countriesToShow}</div>
-      : countriesToShow.length != 1
-        ? countriesToShow.map(country => <div key={country.name.common}>{country.name.common}</div>)
+      : countriesToShow.length !== 1
+        ? countriesToShow.map(country => (
+            <div key={country.name.common}>
+              {country.name.common}
+              <button onClick={() => handleShowCountry(country)}>show</button>
+            </div>
+          ))
         : <Country country={countriesToShow[0]} />
-  )
-}
+  );
+};
 
 const Country = ({country}) => {
     return (
@@ -44,6 +49,10 @@ const App = () => {
     setFilteredCountries(countries.filter(country => country.name.common.toLowerCase().includes(event.target.value.toLowerCase())))
   }
 
+  const handleShowCountry = (country) => {
+    setFilteredCountries([country])
+  }
+
   const countriesToShow = (filteredCountries.length > 0 && filteredCountries.length <= 10)
     ? filteredCountries
     : 'Too many matches, specify another filter'
@@ -51,7 +60,7 @@ const App = () => {
   return(
     <div>
       find countries <input value={filter} onChange={handleFilterChange}/>
-      <Countries countriesToShow={countriesToShow} />
+      <Countries countriesToShow={countriesToShow} handleShowCountry={handleShowCountry} />
     </div>
   )
 
