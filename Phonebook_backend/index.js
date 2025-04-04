@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let persons = [
     { 
       "id": "1",
@@ -54,6 +56,16 @@ app.get('/info', (request, response) => {
     const date = new Date()
     response.send(`Phonebook has info for ${persons.length} people<br>${date}`)
 })
+
+app.post('/api/persons', (request, response) => {
+    const person = request.body
+    const maxId = persons.length > 0
+        ? Math.max(...persons.map(p => p.id)) + 1
+        : 1
+    person.id = maxId.toString()
+    persons = persons.concat(person)
+    response.json(person)
+  })
 
 const PORT = 3001
 app.listen(PORT, () => {
