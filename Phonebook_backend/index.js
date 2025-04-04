@@ -58,14 +58,44 @@ app.get('/info', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const person = request.body
-    const maxId = persons.length > 0
-        ? Math.max(...persons.map(p => p.id)) + 1
-        : 1
-    person.id = maxId.toString()
+    const generateId = () => {
+        const maxId = persons.length > 0
+          ? Math.max(...persons.map(n => Number(n.id)))
+          : 0
+        return String(maxId + 1)
+      }
+      
+    const body = request.body
+    if (!body.name) {
+          return response.status(400).json({ 
+            error: 'name missing' 
+          })
+        }
+    if (!body.number) {
+          return response.status(400).json({ 
+            error: 'number missing' 
+          })
+        }
+    if (persons.some(p => p.name === body.name)) {
+          return response.status(400).json({ 
+            error: 'name must be unique' 
+          })
+        }
+    if (persons.some(p => p.number === body.number)) {
+          return response.status(400).json({ 
+            error: 'number must be unique' 
+          })
+        }
+      
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: generateId(),
+    }
+      
     persons = persons.concat(person)
     response.json(person)
-  })
+})
 
 const PORT = 3001
 app.listen(PORT, () => {
